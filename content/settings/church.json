@@ -1,0 +1,18 @@
+{
+  "name": "True Light Church",
+  "address": "Vanasthalipuram, Hyderabad",
+  "services": [
+    {
+      "name": "Morning Service",
+      "time": "10:00 AM – 12:00 PM",
+      "location": "Vanasthalipuram, Hyderabad",
+      "mapsUrl": "https://maps.app.goo.gl/ASckBvrmHovzkLt37"
+    },
+    {
+      "name": "Evening Service",
+      "time": "6:00 PM – 9:00 PM",
+      "location": "Mohan Nagar, Nagole, Hyderabad",
+      "mapsUrl": "https://maps.app.goo.gl/xgPUWRFVwPujMKBc9"
+    }
+  ]
+}

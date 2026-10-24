@@ -1,0 +1,192 @@
+# Decap CMS settings for the Seed Ministries admin at /admin.
+# Each saved change becomes a commit on GitHub, and Netlify then rebuilds the
+# site automatically (about 1–2 minutes).
+
+backend:
+  name: github
+  repo: GITHUB_USERNAME/seed-ministries # ← replaced during setup
+  branch: main
+
+# Lets the admin run against this computer's files with `npx decap-server`.
+local_backend: true
+
+site_url: https://seedministries.netlify.app
+display_url: https://seedministries.netlify.app
+logo_url: /logo.webp
+
+media_folder: public/uploads
+public_folder: /uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: books
+    label: Books
+    label_singular: Book
+    folder: content/books
+    extension: json
+    format: json
+    create: true
+    slug: "book-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: title
+    summary: "{{position}}. {{title}} — ₹{{price}}"
+    sortable_fields: [position, title]
+    fields:
+      - { label: Position, name: position, widget: number, value_type: int, min: 1, default: 1, hint: "1 is shown first." }
+      - { label: Title, name: title, widget: string }
+      - { label: Author, name: author, widget: string }
+      - { label: Category (e.g. BIBLICAL QUOTES · TELUGU), name: category, widget: string }
+      - { label: Cover image, name: image, widget: image, hint: "Portrait book cover (about 2:3)." }
+      - { label: Description, name: description, widget: text }
+      - { label: Price (₹), name: price, widget: number, value_type: int, min: 0, required: false }
+      - { label: Label shown when there is no price, name: label, widget: string, required: false }
+
+  - name: magazines
+    label: Magazine issues
+    label_singular: Magazine issue
+    folder: content/magazines
+    extension: json
+    format: json
+    create: true
+    slug: "{{fields.month}}"
+    identifier_field: title
+    summary: "{{issue}} — {{title}}"
+    sortable_fields: [month]
+    fields:
+      - label: Issue month (YYYY-MM)
+        name: month
+        widget: string
+        pattern: ['^\d{4}-\d{2}$', "Use the form 2026-04"]
+        hint: "Used for ordering; newest first."
+      - { label: Issue label (e.g. APRIL 2026), name: issue, widget: string }
+      - { label: Title (English), name: title, widget: string }
+      - { label: Title (Telugu), name: titleTelugu, widget: string }
+      - { label: Cover photo, name: image, widget: image, hint: "Square photo works best." }
+      - { label: Highlight, name: highlight, widget: text }
+
+  - name: articles
+    label: Articles
+    label_singular: Article
+    folder: content/articles
+    extension: json
+    format: json
+    create: true
+    slug: "article-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: title
+    summary: "{{date | date('YYYY-MM-DD')}} — {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - &date
+        label: Date
+        name: date
+        widget: datetime
+        date_format: "DD MMM YYYY"
+        time_format: false
+        format: "YYYY-MM-DD"
+        hint: "Newest dates are shown first."
+      - { label: Title, name: title, widget: string }
+      - { label: Topic label (e.g. THE CROSS OF CHRIST), name: category, widget: string }
+      - { label: Card label, name: label, widget: string, default: "TELUGU ARTICLE" }
+      - { label: Author, name: author, widget: string, required: false }
+      - { label: Author place, name: authorPlace, widget: string, required: false }
+      - &reading_blocks
+        label: Content
+        name: blocks
+        widget: list
+        hint: "Add paragraphs and Bible verses in order. Wrap words in *asterisks* to make them bold."
+        types:
+          - label: Paragraph
+            name: text
+            widget: object
+            summary: "{{fields.body | truncate(60)}}"
+            fields:
+              - { label: Text, name: body, widget: text }
+          - label: Bible verse / quote
+            name: verse
+            widget: object
+            summary: "{{fields.reference}} — {{fields.body | truncate(50)}}"
+            fields:
+              - { label: Verse text, name: body, widget: text }
+              - { label: Reference (e.g. యోహాను 5:35), name: reference, widget: string, required: false }
+      - { label: Closing line (e.g. రేపటి భాగములో…), name: continuation, widget: string, required: false }
+
+  - name: daily-matters
+    label: Daily Matters
+    label_singular: Reflection
+    folder: content/daily-matters
+    extension: json
+    format: json
+    create: true
+    slug: "reflection-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: title
+    summary: "{{date | date('YYYY-MM-DD')}} — {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - *date
+      - { label: Title, name: title, widget: string }
+      - { label: Part (e.g. PART 1), name: part, widget: string, required: false }
+      - { label: Author, name: author, widget: string, default: "సత్యనివాస్" }
+      - { label: Author place, name: authorPlace, widget: string, default: "TLC HYD" }
+      - *reading_blocks
+      - { label: Closing line (e.g. రేపటి భాగములో…), name: continuation, widget: string, required: false }
+
+  - name: videos
+    label: Videos
+    label_singular: Video
+    folder: content/videos
+    extension: json
+    format: json
+    create: true
+    slug: "video-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    identifier_field: url
+    summary: "{{date | date('YYYY-MM-DD')}} — {{url}}"
+    sortable_fields: [date]
+    fields:
+      - *date
+      - label: YouTube Short link
+        name: url
+        widget: string
+        pattern: ['(youtube\.com|youtu\.be)/', "Paste a YouTube link"]
+      - label: Full message link (optional)
+        name: fullVideo
+        widget: string
+        required: false
+        hint: "Adds a “Watch full message” button that opens this on YouTube."
+      - label: Title (optional)
+        name: title
+        widget: string
+        required: false
+        hint: "Leave empty to use the title from YouTube."
+
+  - name: settings
+    label: Settings
+    editor:
+      preview: false
+    files:
+      - label: Church details & service timings
+        name: church
+        file: content/settings/church.json
+        format: json
+        fields:
+          - { label: Church name, name: name, widget: string }
+          - { label: Address, name: address, widget: string }
+          - label: Services
+            name: services
+            widget: list
+            summary: "{{fields.name}} — {{fields.time}}"
+            fields:
+              - { label: Service name, name: name, widget: string }
+              - { label: Time (e.g. 10:00 AM – 12:00 PM), name: time, widget: string }
+              - { label: Location, name: location, widget: string }
+              - { label: Google Maps link, name: mapsUrl, widget: string }
+      - label: Magazine name & prices
+        name: magazine
+        file: content/settings/magazine.json
+        format: json
+        fields:
+          - { label: Magazine name, name: name, widget: string }
+          - { label: Tagline, name: tagline, widget: string }
+          - { label: Yearly subscription price (₹), name: yearlySubscriptionPrice, widget: number, value_type: int, min: 0 }
+          - { label: Single issue price (₹), name: singleIssuePrice, widget: number, value_type: int, min: 0 }

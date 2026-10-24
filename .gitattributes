@@ -1,0 +1,5 @@
+# Keep the same line endings here and in edits made through /admin (GitHub).
+* text=auto eol=lf
+*.webp binary
+*.png binary
+*.jpg binary

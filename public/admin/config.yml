@@ -10,8 +10,8 @@ backend:
 # Lets the admin run against this computer's files with `npx decap-server`.
 local_backend: true
 
-site_url: https://seedministries.netlify.app
-display_url: https://seedministries.netlify.app
+site_url: https://seed-ministries.netlify.app
+display_url: https://seed-ministries.netlify.app
 logo_url: /logo.webp
 
 media_folder: public/uploads

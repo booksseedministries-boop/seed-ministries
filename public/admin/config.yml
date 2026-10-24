@@ -4,7 +4,7 @@
 
 backend:
   name: github
-  repo: GITHUB_USERNAME/seed-ministries # ← replaced during setup
+  repo: booksseedministries-boop/seed-ministries
   branch: main
 
 # Lets the admin run against this computer's files with `npx decap-server`.
